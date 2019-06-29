@@ -1,5 +1,5 @@
 (defproject phone "0.1.0-SNAPSHOT"
-  :description "an app that tells you whos callin"
+  :description "an app that tells you whos calling"
   :url "http://localhost/phone"
 
   :source-paths ["src" "src/phone"]

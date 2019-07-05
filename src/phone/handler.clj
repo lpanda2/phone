@@ -8,12 +8,14 @@
             [compojure.core :refer [GET PUT POST DELETE defroutes]]
             [compojure.handler :as handler]
             [compojure.route :refer [resources not-found]]
-            [ring.util.response :refer [resource-response response]]
+            [ring.util.response :refer [resource-response response created]]
             [ring.middleware.format :refer [wrap-restful-format]]
             [ring.middleware.stacktrace :refer [wrap-stacktrace]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.multipart-params :refer [wrap-multipart-params]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]))
+
+(def current-db (atom db))
 
 (defn get-number [n]
   (-> n trim (replace-first "2B" "") (parse-phone "US")))
@@ -33,6 +35,29 @@
       invalid? (bad-request (str "are you sure " n " is a valid phone number?"))
       results (response (assoc {} :results results))
       :else (not-found (str n " was not found in our records.")))))
+
+(def any? (comp boolean some))
+
+(defn add-to-database [{:keys [params]}]
+  (let [{:keys [name number context]} params
+        missing-params? (any? nil? [name number context])
+        parsed (when number (get-number number))
+        invalid? (= (first parsed) :invalid)
+        phone-number (-> parsed second :e164)
+        results (get @current-db phone-number)
+        context-exists? (some
+                         (-> context hash-set)
+                         (->> results (mapv :context)))]
+    (cond
+      missing-params? (bad-request (str "did you format the query correctly? are you missing a parameter?"))
+      invalid? (bad-request (str "are you sure " number " is a valid phone number?"))
+      context-exists? (bad-request (str "the context you provided for this phone number already exists."))
+      (and results (not context-exists?)) (do
+                                            (swap! current-db update phone-number conj params)
+                                            (created "/number" (last (get @current-db phone-number))))
+      (not results) (do
+                      (swap! current-db assoc phone-number [params])
+                      (created "/number" (get @current-db phone-number))))))
 
 (defroutes app-routes
 

@@ -18,7 +18,7 @@
                  [hiccup "1.0.5"]]
 
   :plugins [[lein-ring "0.8.13"]
-            [lein-cljsbuild "1.0.3"]]
+            [lein-cljsbuild "1.1.1"]]
 
   :hooks [leiningen.cljsbuild]
 
@@ -31,8 +31,6 @@
                          :pretty-print true
                          ;; :source-map "resources/public/js/phone.js.map"
                          }}]}
-
-  ;:ring {:handler phone.handler/app}
 
   :profiles
     {:dev {:dependencies [[ring-mock "0.1.5"]

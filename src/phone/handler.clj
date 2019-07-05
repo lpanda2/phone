@@ -23,8 +23,9 @@
    :headers {}
    :body b})
 
-(defn query-database [n]
-  (let [parsed (get-number n)
+(defn query-database [{:keys [params]}]
+  (let [n (:number params)
+        parsed (when n (get-number n))
         invalid? (= (first parsed) :invalid)
         results (get db (-> parsed second :e164))]
     (print n)
@@ -37,7 +38,8 @@
 
   (GET "/" [] (response "hello"))
 
-  (GET "/query" [number] (query-database number))
+  (GET "/query" request (query-database request))
+  (POST "/number" request (response (add-to-database request)))
 
   (resources "/")
   (not-found "not found"))

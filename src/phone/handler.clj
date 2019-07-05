@@ -27,9 +27,9 @@
   (let [n (:number params)
         parsed (when n (get-number n))
         invalid? (= (first parsed) :invalid)
-        results (get db (-> parsed second :e164))]
-    (print n)
+        results (get @current-db (-> parsed second :e164))]
     (cond
+      (not n) (bad-request (str "did you format the query correctly?"))
       invalid? (bad-request (str "are you sure " n " is a valid phone number?"))
       results (response (assoc {} :results results))
       :else (not-found (str n " was not found in our records.")))))

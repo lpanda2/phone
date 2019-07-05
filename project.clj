@@ -14,6 +14,7 @@
                  [mount "0.1.12"]
                  [cheshire "5.8.1"]
                  [clj-http "3.9.0"]
+                 [me.vlobanov/libphonenumber "0.2.0"]
                  [hiccup "1.0.5"]]
 
   :plugins [[lein-ring "0.8.13"]

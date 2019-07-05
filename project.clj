@@ -37,7 +37,8 @@
                           [javax.servlet/servlet-api "2.5"]]
            :plugins [[lein-bin "0.3.4"]
                      [cider/cider-nrepl "0.21.2-SNAPSHOT"]]
-
+           :main phone.server
+           :aot [phone.server]
            :resource-paths ["config/dev"]}
 
      :uberjar {:source-paths  ["env/prod/clj"]

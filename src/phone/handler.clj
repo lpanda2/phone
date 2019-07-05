@@ -1,7 +1,7 @@
 (ns phone.handler
   (:require [phone.layout :refer [say]]
             [phone.config :refer [config]]
-            [phone.db :refer [db]]
+            [phone.db :refer [db] :rename {db current-db}]
             [mount.core :refer [defstate]]
             [libphonenumber.core :refer [parse-phone]]
             [clojure.string :refer [trim replace-first]]
@@ -14,8 +14,6 @@
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.multipart-params :refer [wrap-multipart-params]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]))
-
-(def current-db (atom db))
 
 (defn get-number [n]
   (-> n trim (replace-first "2B" "") (parse-phone "US")))

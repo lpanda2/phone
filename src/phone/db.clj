@@ -16,7 +16,7 @@
         csv (with-open [reader (io/reader resource)]
               (doall (csv/read-csv reader)))
         data (->> csv ->maps (map ->clean) (group-by :number))]
-    data))
+    (atom data)))
 
 (defstate db
   :start (load-data-into-db))

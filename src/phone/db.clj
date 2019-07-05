@@ -20,3 +20,9 @@
 
 (defstate db
   :start (load-data-into-db))
+
+(comment
+  (def resource (io/resource "callerid-data.csv"))
+  (def csv (with-open [reader (io/reader resource)]
+             (doall (csv/read-csv reader))))
+  (def data (->> csv ->maps (map ->clean) (group-by :phone))))

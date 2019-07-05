@@ -16,7 +16,7 @@
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]))
 
 (defn get-number [n]
-  (get db (-> n trim (replace-first "2B" "") (parse-phone "US"))))
+  (-> n trim (replace-first "2B" "") (parse-phone "US")))
 
 (defn bad-request [b]
   {:status 400
@@ -24,12 +24,13 @@
    :body b})
 
 (defn query-database [n]
-  (let [db-res (get-number n)
-        status (first db-res)
-        res (-> db-res second :e164)]
+  (let [parsed (get-number n)
+        invalid? (= (first parsed) :invalid)
+        results (get db (-> parsed second :e164))]
+    (print n)
     (cond
-      (= status :invalid) (bad-request (str "are you sure " n " is a valid phone number?"))
-      res (response (assoc {} :results res))
+      invalid? (bad-request (str "are you sure " n " is a valid phone number?"))
+      results (response (assoc {} :results results))
       :else (not-found (str n " was not found in our records.")))))
 
 (defroutes app-routes

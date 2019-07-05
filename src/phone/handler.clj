@@ -1,6 +1,7 @@
 (ns phone.handler
   (:require [phone.layout :refer [say]]
             [phone.config :refer [config]]
+            [phone.db :refer [db]]
             [mount.core :refer [defstate]]
             [compojure.core :refer [GET PUT POST DELETE defroutes]]
             [compojure.handler :as handler]

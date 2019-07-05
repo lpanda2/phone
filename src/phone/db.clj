@@ -6,16 +6,16 @@
             [libphonenumber.core :refer [parse-phone example-phone]]))
 
 (defn ->maps [csv-data]
-  (map zipmap (repeat [:phone :context :caller-id]) csv-data))
+  (map zipmap (repeat [:number :context :name]) csv-data))
 
 (defn ->clean [m]
-  (update m :phone #(-> % (parse-phone "US") second :e164)))
+  (update m :number #(-> % (parse-phone "US") second :e164)))
 
 (defn load-data-into-db []
   (let [resource (io/resource "callerid-data.csv")
         csv (with-open [reader (io/reader resource)]
               (doall (csv/read-csv reader)))
-        data (->> csv ->maps (map ->clean) (group-by :phone))]
+        data (->> csv ->maps (map ->clean) (group-by :number))]
     data))
 
 (defstate db
